@@ -1,19 +1,39 @@
 # Hai Claude Skill — Personal Skill Pack
 
-> Bộ skill cá nhân cho Claude Code (và các AI coding agent khác). Tổng hợp **8 skill** Hải build hoặc curate, install bằng 1 lệnh.
+> Bộ skill cá nhân cho Claude Code (và các AI coding agent khác). Tổng hợp **11 skill** Hải build hoặc curate, install bằng 1 lệnh.
 
-## Skills
+## Skills (11 — 4 categories)
+
+### 🎨 Frontend / UI Design (5)
 
 | Skill | Trigger | Mục đích |
 |-------|---------|----------|
-| 🎨 [`web-taste`](skills/web-taste) | Mọi web file (.tsx/.jsx/.vue/.svelte/.html/.css) hoặc keyword build/design/render web | **Anti-slop web frontend** — Discovery Form + 5 deterministic directions + 27 anti-patterns + ready-to-paste hero/section/motion blueprints. Target Kimi/Lovable-tier. |
-| 🎨 [`frontend-design`](skills/frontend-design) | Mọi web UI task | Kimi formula 7 công thức bí mật typography/spacing/color |
-| ✨ [`kimi-render`](skills/kimi-render) | Build landing/storefront/marketing page mới | 7 pattern Wanderlust render + spec-first workflow + HTML template |
-| 📱 [`mobile-design`](skills/mobile-design) | Flutter/RN/iOS/Android UI task | Mobile design formula |
-| 📱 [`lme-flutter`](skills/lme-flutter) | Project có `lme_ui` dependency | Build Flutter UI bằng package LME |
-| 💬 [`brief-recap`](skills/brief-recap) | Sau mọi task code/edit/fix | Trả lời ngắn gọn + giải thích cho dev mobile (Flutter) |
-| 🛠 [`harness`](skills/harness) | "하네스 구성" / harness engineering | Meta skill — define agents + build child skills |
-| 📝 [`obsidian-skills`](skills/obsidian-skills) | Obsidian vault tasks | Curated từ obsidian-skills repo (defuddle / json-canvas / obsidian-bases / obsidian-cli / obsidian-markdown) |
+| [`web-taste`](skills/web-taste) | Mọi web file (.tsx/.jsx/.vue/.svelte/.html/.css) hoặc keyword build/design/render web | **Anti-slop web frontend** — Discovery Form + 5 deterministic directions + 27 anti-patterns + ready-to-paste hero/section/motion blueprints. Target Kimi/Lovable-tier. |
+| [`frontend-design`](skills/frontend-design) | Mọi web UI task | Kimi formula 7 công thức bí mật typography/spacing/color |
+| [`kimi-render`](skills/kimi-render) | Build landing/storefront/marketing page mới | 7 pattern Wanderlust render + spec-first workflow + HTML template |
+| [`mobile-design`](skills/mobile-design) | Flutter/RN/iOS/Android UI task | Mobile design formula |
+| [`lme-flutter`](skills/lme-flutter) | Project có `lme_ui` dependency | Build Flutter UI bằng package LME |
+
+### ⚙️ Backend / Architecture (2)
+
+| Skill | Trigger | Mục đích |
+|-------|---------|----------|
+| [`backend-fastapi`](skills/backend-fastapi) | File backend/**/*.py với FastAPI/SQLAlchemy | **Multi-tenant SaaS patterns** — 7 luật cứng: shop_id filter / Decimal money / async / atomic stock / order state machine / JWT auth / Settings env. Plus Alembic migration recipes. |
+| [`flutter-architecture`](skills/flutter-architecture) | File .dart với riverpod/dio/go_router | **Flutter production architecture** — Riverpod patterns / Dio interceptors / GoRouter type-safe / Result type / repository pattern / feature-based folder. |
+
+### 🔍 Code Quality (1)
+
+| Skill | Trigger | Mục đích |
+|-------|---------|----------|
+| [`code-review`](skills/code-review) | "review/check/audit" hoặc trước commit/PR | **6 audit lenses** — security / multi-tenant leak / money precision / race conditions / state machine / API↔frontend boundary. Plus grep recipes + OWASP top 10 mapping. |
+
+### 💬 Workflow / Meta (3)
+
+| Skill | Trigger | Mục đích |
+|-------|---------|----------|
+| [`brief-recap`](skills/brief-recap) | Sau mọi task code/edit/fix | Trả lời ngắn gọn + giải thích cho dev mobile (Flutter) |
+| [`harness`](skills/harness) | "하네스 구성" / harness engineering | Meta skill — define agents + build child skills |
+| [`obsidian-skills`](skills/obsidian-skills) | Obsidian vault tasks | Curated từ obsidian-skills repo (defuddle / json-canvas / obsidian-bases / obsidian-cli / obsidian-markdown) |
 
 ---
 
@@ -64,19 +84,26 @@ Script remove symlinks. Skills backup ở `~/.claude/skills.bak/<timestamp>/` đ
 
 ```
 haiclaudeskill/
-├── README.md              # File này
-├── LICENSE                # MIT
-├── install.sh             # Symlink 8 skills → ~/.claude/skills/
-├── uninstall.sh           # Remove symlinks
+├── README.md                    # File này
+├── LICENSE                      # MIT
+├── install.sh                   # Symlink 11 skills → ~/.claude/skills/
+├── uninstall.sh                 # Remove symlinks
 └── skills/
-    ├── web-taste/         # Anti-slop web (Kimi/Lovable-tier)
-    ├── frontend-design/   # Kimi 7 công thức
-    ├── kimi-render/       # 7 Wanderlust patterns + HTML templates
-    ├── mobile-design/     # Mobile UI formula
-    ├── lme-flutter/       # LME Flutter package
-    ├── brief-recap/       # Ngắn gọn + giải thích
-    ├── harness/           # Meta skill (Korean)
-    └── obsidian-skills/   # Obsidian skills bundle
+    │
+    ├── 🎨 web-taste/             # Anti-slop web (Kimi/Lovable-tier)
+    ├── 🎨 frontend-design/       # Kimi 7 công thức
+    ├── 🎨 kimi-render/           # 7 Wanderlust patterns + HTML templates
+    ├── 🎨 mobile-design/         # Mobile UI formula
+    ├── 🎨 lme-flutter/           # LME Flutter package
+    │
+    ├── ⚙️ backend-fastapi/       # Multi-tenant SaaS — 7 luật cứng
+    ├── ⚙️ flutter-architecture/  # Riverpod + Dio + GoRouter patterns
+    │
+    ├── 🔍 code-review/           # 6 audit lenses + OWASP top 10
+    │
+    ├── 💬 brief-recap/           # Ngắn gọn + giải thích
+    ├── 🛠 harness/                # Meta skill (Korean)
+    └── 📝 obsidian-skills/        # Obsidian skills bundle
 ```
 
 ---
