@@ -1,8 +1,8 @@
 # Hai Claude Skill — Personal Skill Pack
 
-> Bộ skill cá nhân cho Claude Code (và các AI coding agent khác). Tổng hợp **11 skill** Hải build hoặc curate, install bằng 1 lệnh.
+> Bộ skill cá nhân cho Claude Code (và các AI coding agent khác). Tổng hợp **14 skill** Hải build hoặc curate, install bằng 1 lệnh.
 
-## Skills (11 — 4 categories)
+## Skills (14 — 5 categories)
 
 ### 🎨 Frontend / UI Design (5)
 
@@ -26,6 +26,14 @@
 | Skill | Trigger | Mục đích |
 |-------|---------|----------|
 | [`code-review`](skills/code-review) | "review/check/audit" hoặc trước commit/PR | **6 audit lenses** — security / multi-tenant leak / money precision / race conditions / state machine / API↔frontend boundary. Plus grep recipes + OWASP top 10 mapping. |
+
+### 🛠️ Engineering Workflow (3)
+
+| Skill | Trigger | Mục đích |
+|-------|---------|----------|
+| [`debug-first`](skills/debug-first) | Error message, traceback, bug, crash, "không chạy", "bị lỗi" | **Đọc error TRƯỚC** — 3-layer error protocol / Python+JS+Flutter error anatomy / git bisect workflow. Stop Googling before understanding the error. |
+| [`git-pr`](skills/git-pr) | git commit/push/PR, "viết commit message", rebase, changelog | **Conventional Commits** — types table / atomic commits / PR templates (feature/bugfix/refactor) / branch naming / git recovery recipes. KHÔNG --no-verify. |
+| [`deploy`](skills/deploy) | "deploy", Railway/Vercel/VPS, env vars, Dockerfile, "production" | **Pre-deploy checklist** — env vars / port management / Railway+Vercel recipes / DB migration order / CORS / health checks / zero-downtime / rollback. |
 
 ### 💬 Workflow / Meta (3)
 
@@ -86,7 +94,7 @@ Script remove symlinks. Skills backup ở `~/.claude/skills.bak/<timestamp>/` đ
 haiclaudeskill/
 ├── README.md                    # File này
 ├── LICENSE                      # MIT
-├── install.sh                   # Symlink 11 skills → ~/.claude/skills/
+├── install.sh                   # Symlink 14 skills → ~/.claude/skills/
 ├── uninstall.sh                 # Remove symlinks
 └── skills/
     │
@@ -100,6 +108,10 @@ haiclaudeskill/
     ├── ⚙️ flutter-architecture/  # Riverpod + Dio + GoRouter patterns
     │
     ├── 🔍 code-review/           # 6 audit lenses + OWASP top 10
+    │
+    ├── 🛠️ debug-first/           # Đọc error TRƯỚC + git bisect workflow
+    ├── 🛠️ git-pr/                # Conventional commits + PR templates
+    ├── 🛠️ deploy/                # Railway + Vercel + pre-deploy checklist
     │
     ├── 💬 brief-recap/           # Ngắn gọn + giải thích
     ├── 🛠 harness/                # Meta skill (Korean)
