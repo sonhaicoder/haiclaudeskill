@@ -1,144 +1,97 @@
-# Hai Claude Skill — Personal Skill Pack
+# haiclaudeskill — production engineering rules, injected into your AI coding agent
 
-> Bộ skill cá nhân cho Claude Code (và các AI coding agent khác). Tổng hợp **14 skill** Hải build hoặc curate, install bằng 1 lệnh.
-
-## Skills (14 — 5 categories)
-
-### 🎨 Frontend / UI Design (5)
-
-| Skill | Trigger | Mục đích |
-|-------|---------|----------|
-| [`web-taste`](skills/web-taste) | Mọi web file (.tsx/.jsx/.vue/.svelte/.html/.css) hoặc keyword build/design/render web | **Anti-slop web frontend** — Discovery Form + 5 deterministic directions + 27 anti-patterns + ready-to-paste hero/section/motion blueprints. Target Kimi/Lovable-tier. |
-| [`frontend-design`](skills/frontend-design) | Mọi web UI task | Kimi formula 7 công thức bí mật typography/spacing/color |
-| [`kimi-render`](skills/kimi-render) | Build landing/storefront/marketing page mới | 7 pattern Wanderlust render + spec-first workflow + HTML template |
-| [`mobile-design`](skills/mobile-design) | Flutter/RN/iOS/Android UI task | Mobile design formula |
-| [`lme-flutter`](skills/lme-flutter) | Project có `lme_ui` dependency | Build Flutter UI bằng package LME |
-
-### ⚙️ Backend / Architecture (2)
-
-| Skill | Trigger | Mục đích |
-|-------|---------|----------|
-| [`backend-fastapi`](skills/backend-fastapi) | File backend/**/*.py với FastAPI/SQLAlchemy | **Multi-tenant SaaS patterns** — 7 luật cứng: shop_id filter / Decimal money / async / atomic stock / order state machine / JWT auth / Settings env. Plus Alembic migration recipes. |
-| [`flutter-architecture`](skills/flutter-architecture) | File .dart với riverpod/dio/go_router | **Flutter production architecture** — Riverpod patterns / Dio interceptors / GoRouter type-safe / Result type / repository pattern / feature-based folder. |
-
-### 🔍 Code Quality (1)
-
-| Skill | Trigger | Mục đích |
-|-------|---------|----------|
-| [`code-review`](skills/code-review) | "review/check/audit" hoặc trước commit/PR | **6 audit lenses** — security / multi-tenant leak / money precision / race conditions / state machine / API↔frontend boundary. Plus grep recipes + OWASP top 10 mapping. |
-
-### 🛠️ Engineering Workflow (3)
-
-| Skill | Trigger | Mục đích |
-|-------|---------|----------|
-| [`debug-first`](skills/debug-first) | Error message, traceback, bug, crash, "không chạy", "bị lỗi" | **Đọc error TRƯỚC** — 3-layer error protocol / Python+JS+Flutter error anatomy / git bisect workflow. Stop Googling before understanding the error. |
-| [`git-pr`](skills/git-pr) | git commit/push/PR, "viết commit message", rebase, changelog | **Conventional Commits** — types table / atomic commits / PR templates (feature/bugfix/refactor) / branch naming / git recovery recipes. KHÔNG --no-verify. |
-| [`deploy`](skills/deploy) | "deploy", Railway/Vercel/VPS, env vars, Dockerfile, "production" | **Pre-deploy checklist** — env vars / port management / Railway+Vercel recipes / DB migration order / CORS / health checks / zero-downtime / rollback. |
-
-### 💬 Workflow / Meta (3)
-
-| Skill | Trigger | Mục đích |
-|-------|---------|----------|
-| [`brief-recap`](skills/brief-recap) | Sau mọi task code/edit/fix | Trả lời ngắn gọn + giải thích cho dev mobile (Flutter) |
-| [`harness`](skills/harness) | "하네스 구성" / harness engineering | Meta skill — define agents + build child skills |
-| [`obsidian-skills`](skills/obsidian-skills) | Obsidian vault tasks | Curated từ obsidian-skills repo (defuddle / json-canvas / obsidian-bases / obsidian-cli / obsidian-markdown) |
+> A pack of **14 auto-triggering Claude Code skills** that load hard-won engineering rules into the agent's context *the moment they're relevant* — touch a FastAPI file and the multi-tenant / `Decimal`-money / async rules arrive **before** a line is written, not after a review finds the bug.
+>
+> The rules are distilled from a real ~60K-line FastAPI + Next.js + Flutter commerce codebase. The interesting part isn't the rules themselves — it's the **trigger precision** and **deterministic option-spaces** that make an agent's output reproducible instead of a dice roll.
 
 ---
 
-## Cài đặt nhanh
+## The problem
 
-### Option 1 — Symlink toàn bộ (recommended)
+AI coding agents are confident and wrong. They reach for `float` on money, drop the tenant filter in a multi-tenant query, ship UI with no empty/error states, and invent APIs that don't exist. Plain prompt rules help, but they're easy to bury: a 200-line `CLAUDE.md` is in context for *every* task, so the rules that matter for *this* file get diluted by the 90% that don't.
 
+These skills invert that. Each one carries a precise `description` front-matter that Claude Code matches against the **current file extension or the user's intent**, and loads only when relevant. The agent gets a focused rule-pack for the task in front of it — high signal, no dilution.
+
+---
+
+## Architecture
+
+```mermaid
+flowchart TD
+    U[User prompt / file edit] --> M{Claude Code<br/>skill matcher}
+    M -->|".py + FastAPI"| A[backend-fastapi<br/>7 hard rules]
+    M -->|".tsx / 'build a page'"| B[web-taste / frontend-design<br/>27 anti-patterns + directions]
+    M -->|".dart"| C[flutter-architecture / mobile-design]
+    M -->|"'review this'"| D[code-review<br/>6 audit lenses]
+    A --> CTX[rules injected INTO context<br/>before code is written]
+    B --> CTX
+    C --> CTX
+    D --> CTX
+    CTX --> G[agent writes code<br/>under the constraints]
+```
+
+A skill is a markdown rule-pack plus front-matter. The front-matter's `description` is the whole game: it encodes an explicit **should-fire / should-NOT-fire** matrix that the matcher reads. `mobile-design` fires on `.dart`/`.swift`, never on web `.tsx`; `backend-fastapi` fires on FastAPI Python, never on Express or Django. Over-triggering poisons the context window as badly as under-triggering misses it — so trigger precision is treated as a first-class design constraint, not an afterthought.
+
+---
+
+## The interesting engineering
+
+**1 · Trigger precision as a first-class concern.** The hard part of auto-trigger isn't firing — it's *not* firing on the wrong file. Every skill `description` carries a should-fire / should-NOT-fire matrix so the matcher loads the right pack and stays silent otherwise. This is what keeps the context window clean enough that the loaded rules actually get followed.
+
+**2 · Deterministic option-spaces over "use your judgment."** Each design/quality skill hands the agent *N concrete options* — 5 visual directions, 7 render patterns, 6 audit lenses, 27 anti-patterns — instead of free-form latitude. Constraining the decision space is what makes agent output reproducible across runs rather than a roll of the dice.
+
+**3 · Rules distilled from production, not from blog posts.** The backend and architecture rules (multi-tenant `shop_id` isolation on every query, `Decimal` money never `float`, atomic stock updates, order state-machine validation, async-everywhere) come from a real ~60K-line commerce platform. High signal density for that stack.
+
+**4 · Portable by construction.** Skills reference `${CLAUDE_PLUGIN_ROOT}`, so the pack works on any machine after `/plugin install`. `install.sh` offers a symlink path that backs up any colliding skill to `~/.claude/skills.bak/<timestamp>/` before linking — non-destructive by default.
+
+> These skills are designed to run inside a hook-enforced Claude Code harness (edit-time typecheck, a tiered command guard, commit-quality checks). This public repo is the **open skills layer** of that larger personal toolkit.
+
+---
+
+## What's inside (14 skills)
+
+| Category | Skills | What they enforce |
+|---|---|---|
+| **Frontend / UI** | `web-taste`, `frontend-design`, `kimi-render`, `mobile-design`, `lme-flutter` | Anti-slop UI: deterministic visual directions, 27 anti-patterns, ready-to-paste hero/section/motion blueprints, design-system tokens, mandatory loading/empty/error states |
+| **Backend / Architecture** | `backend-fastapi`, `flutter-architecture` | Multi-tenant `shop_id` isolation, `Decimal` money, async I/O, atomic stock, order state machines; Riverpod/Dio/GoRouter + repository pattern |
+| **Code quality** | `code-review` | 6 audit lenses — SQLi/XSS & secrets, multi-tenant leak, money precision, race conditions, state-machine jumps, API↔frontend drift — plus a severity-scoring rubric |
+| **Workflow** | `debug-first`, `git-pr`, `deploy` | Read-the-error-first protocol; Conventional Commits (no `--no-verify`); pre-deploy checklist + rollback |
+| **Meta / Productivity** | `harness`, `brief-recap`, `obsidian-skills` | Harness configuration; concise technical recaps; Obsidian note automation |
+
+---
+
+## Quickstart
+
+**As a Claude Code plugin:**
+```
+/plugin marketplace add sonhaicoder/haiclaudeskill
+/plugin install haiclaudeskill
+```
+
+**Skills only, via symlink (non-destructive — backs up collisions):**
 ```bash
 git clone https://github.com/sonhaicoder/haiclaudeskill.git ~/haiclaudeskill
 cd ~/haiclaudeskill && ./install.sh
 ```
 
-`install.sh` symlink TỪNG skill từ repo → `~/.claude/skills/<skill-name>`. Skills cũ sẽ được backup vào `~/.claude/skills.bak/<timestamp>/` (không xoá).
-
-### Option 2 — Symlink 1 skill cụ thể
-
-```bash
-ln -s "$(pwd)/skills/web-taste" ~/.claude/skills/web-taste
-```
-
-### Option 3 — Copy vào project local (`.claude/skills/`)
-
+**One skill into a project:**
 ```bash
 cp -r skills/web-taste <your-project>/.claude/skills/
 ```
 
-### Option 4 — Vercel `npx skills add`
-
-```bash
-npx skills add https://github.com/sonhaicoder/haiclaudeskill
-# Hoặc 1 skill cụ thể:
-npx skills add https://github.com/sonhaicoder/haiclaudeskill --skill web-taste
-```
+Skills load on Claude Code start and auto-fire by file extension / keyword — no manual invocation. Uninstall with `./uninstall.sh` (symlinks removed; backups under `~/.claude/skills.bak/` are kept).
 
 ---
 
-## Gỡ cài đặt
+## Limitations & honesty
 
-```bash
-cd ~/haiclaudeskill && ./uninstall.sh
-```
-
-Script remove symlinks. Skills backup ở `~/.claude/skills.bak/<timestamp>/` được giữ nguyên — anh restore manual nếu cần.
-
----
-
-## Cấu trúc repo
-
-```
-haiclaudeskill/
-├── README.md                    # File này
-├── LICENSE                      # MIT
-├── install.sh                   # Symlink 14 skills → ~/.claude/skills/
-├── uninstall.sh                 # Remove symlinks
-└── skills/
-    │
-    ├── 🎨 web-taste/             # Anti-slop web (Kimi/Lovable-tier)
-    ├── 🎨 frontend-design/       # Kimi 7 công thức
-    ├── 🎨 kimi-render/           # 7 Wanderlust patterns + HTML templates
-    ├── 🎨 mobile-design/         # Mobile UI formula
-    ├── 🎨 lme-flutter/           # LME Flutter package
-    │
-    ├── ⚙️ backend-fastapi/       # Multi-tenant SaaS — 7 luật cứng
-    ├── ⚙️ flutter-architecture/  # Riverpod + Dio + GoRouter patterns
-    │
-    ├── 🔍 code-review/           # 6 audit lenses + OWASP top 10
-    │
-    ├── 🛠️ debug-first/           # Đọc error TRƯỚC + git bisect workflow
-    ├── 🛠️ git-pr/                # Conventional commits + PR templates
-    ├── 🛠️ deploy/                # Railway + Vercel + pre-deploy checklist
-    │
-    ├── 💬 brief-recap/           # Ngắn gọn + giải thích
-    ├── 🛠 harness/                # Meta skill (Korean)
-    └── 📝 obsidian-skills/        # Obsidian skills bundle
-```
+- **No automated test or eval suite.** There's no CI and no measured trigger-precision numbers; the should-fire / should-NOT-fire matrices live in each skill's `description` and are validated by hand. Claims here describe what the skills *do*, not what a benchmark *proved*.
+- **Opinionated toward one stack.** Rules are distilled from a real FastAPI + Next.js + Flutter codebase — high signal for that stack, thinner for Go, Rust, Django, React Native, etc.
+- **Vietnamese-first prose.** Several skills phrase guidance in Vietnamese (the author's working language). The engineering rules are language-agnostic; the prose around them isn't.
+- **Trigger descriptions are model-sensitive.** What a matcher fires on can shift across Claude model versions and needs occasional re-tuning.
 
 ---
 
-## Triết lý skill design (Hải's preferences)
+## Tech stack
 
-1. **Auto-trigger thay vì user nhớ** — skill kích hoạt theo file extension hoặc keywords, không cần invoke manual
-2. **Deterministic > free-form** — 5 directions cụ thể, 7 patterns cụ thể, KHÔNG "AI tự quyết"
-3. **Ready-to-paste > rules** — code blueprints copy-paste được, không chỉ best practice abstract
-4. **Quality tier scoring** — Kimi/Lovable-tier có checklist 24-26 aspects, không vague "premium"
-5. **Anti-AI-slop guardrails** — 27 anti-patterns deterministic, force fix trước ship
-6. **Vietnamese-first comm** — em xưng "em" gọi "anh", text Việt có dấu
-
----
-
-## Standalone repos liên quan
-
-| Repo | Note |
-|------|------|
-| [web-taste-skill](https://github.com/sonhaicoder/web-taste-skill) | Standalone web-taste skill (đã import vào đây) — có thể fork/share riêng |
-
----
-
-## License
-
-MIT — fork, edit, remix thoải mái. Credit không bắt buộc nhưng appreciated nếu bạn ship cái gì hay.
+`Claude Code plugin spec` · `skill / auto-trigger architecture` · `deterministic option-spaces` · `production-distilled rules (FastAPI · Next.js · Flutter)` · `MIT`
